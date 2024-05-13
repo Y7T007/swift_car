@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,17 +79,16 @@ WSGI_APPLICATION = 'swift_car.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'SwiftCar',
+        'NAME': config('DB_NAME'),
         'CLIENT': {
-            'host': 'your-db-host',
-            'port': 'your-db-port',
-            'username': 'your-db-username',
-            'password': 'your-db-password',
+            'host': config('DB_HOST'),
+            'port': config('DB_PORT', cast=int),
+            'username': config('DB_USERNAME', default=''),
+            'password': config('DB_PASSWORD', default=''),
             'authMechanism': 'SCRAM-SHA-1',
         }
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
