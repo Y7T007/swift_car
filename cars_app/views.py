@@ -2,7 +2,7 @@ from django.http import JsonResponse
 
 def add_car(request):
     # handle the add car request
-    return JsonResponse({"message": "Add car view"})
+    return JsonResponse({"message": "Add car view "+str(request)})
 
 def remove_car(request, car_id):
     # handle the remove car request
@@ -14,7 +14,7 @@ def view_all_cars(request):
 
 def view_car(request, car_id):
     # handle the view car request
-    return JsonResponse({"message": "View car view"})
+    return JsonResponse({"message": "Hello world : View car view"+str(car_id)})
 
 def update_car(request, car_id):
     # handle the update car request
