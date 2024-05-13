@@ -76,11 +76,17 @@ WSGI_APPLICATION = 'swift_car.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'SwiftCar',
+        'CLIENT': {
+            'host': 'your-db-host',
+            'port': 'your-db-port',
+            'username': 'your-db-username',
+            'password': 'your-db-password',
+            'authMechanism': 'SCRAM-SHA-1',
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
