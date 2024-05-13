@@ -1,3 +1,5 @@
-from django.shortcuts import render
+from django.http import JsonResponse
 
-# Create your views here.
+def dashboard(request):
+    # handle the dashboard request
+    return JsonResponse({"message": "Dashboard view"})
