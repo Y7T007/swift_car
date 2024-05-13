@@ -9,4 +9,5 @@ urlpatterns = [
     path('reservations/', include('reservations_app.urls')),
     path('clients/', include('clients_app.urls')),
     path('managers/', include('managers_app.urls')),
+    path('agencies/', include('agencies_app.urls')),
 ]
