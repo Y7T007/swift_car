@@ -1,8 +1,9 @@
+from djongo import models as djongo_models
 from django.db import models
 from managers_app.models import Manager
 
 class Client(models.Model):
-    client_id = models.IntegerField()
+    _id = djongo_models.ObjectIdField()
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
