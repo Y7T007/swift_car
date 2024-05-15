@@ -33,13 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'clients_app',
     'managers_app',
-    'reservations_app',
     'cars_app',
-    'agencies_app',
-    'auth_app',
-
 ]
 
 MIDDLEWARE = [
@@ -79,6 +74,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'SwiftCar',
+        'HOST' : 'mongodb://localhost:27017',
     }
 }
 
@@ -123,4 +119,3 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'auth_app.User'
