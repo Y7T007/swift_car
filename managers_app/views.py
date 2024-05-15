@@ -1,3 +1,4 @@
+from bson import ObjectId
 from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -5,6 +6,19 @@ from .models import Manager
 from bson.decimal128 import Decimal128
 import json
 from datetime import date
+
+
+from bson.objectid import ObjectId
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal128):
+            return str(obj)
+        elif isinstance(obj, date):
+            return obj.isoformat()  # convert date to "YYYY-MM-DD" string
+        elif isinstance(obj, ObjectId):
+            return str(obj)  # convert ObjectId to string
+        return super(DecimalEncoder, self).default(obj)
 
 @csrf_exempt
 def add_manager(request):
@@ -16,14 +30,6 @@ def add_manager(request):
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal128):
-            return str(obj)
-        elif isinstance(obj, date):
-            return obj.isoformat()  # convert date to "YYYY-MM-DD" string
-        return super(DecimalEncoder, self).default(obj)
 
 def view_all_managers(request):
     managers = Manager.objects.all()
@@ -38,14 +44,15 @@ def remove_manager(request, manager_id):
     except Manager.DoesNotExist:
         return JsonResponse({"error": "Manager not found"}, status=404)
 
+
 def view_manager(request, manager_id):
     try:
-        manager = Manager.objects.get(id=manager_id)
+        manager = Manager.objects.get(_id=ObjectId(manager_id))
         manager_dict = model_to_dict(manager)
-        return JsonResponse(manager_dict)
+        manager_json = json.dumps(manager_dict, cls=DecimalEncoder)
+        return HttpResponse(manager_json, content_type='application/json')
     except Manager.DoesNotExist:
         return JsonResponse({"error": "Manager not found"}, status=404)
-
 @csrf_exempt
 def update_manager(request, manager_id):
     if request.method == 'POST':
@@ -55,7 +62,9 @@ def update_manager(request, manager_id):
             for key, value in data.items():
                 setattr(manager, key, value)
             manager.save()
-            return JsonResponse({"message": "Manager updated successfully"})
+            manager_dict = model_to_dict(manager)
+            manager_json = json.dumps(manager_dict, cls=DecimalEncoder)
+            return HttpResponse(manager_json, content_type='application/json')
         except Manager.DoesNotExist:
             return JsonResponse({"error": "Manager not found"}, status=404)
     else:

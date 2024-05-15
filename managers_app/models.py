@@ -1,6 +1,10 @@
 from django.db import models
+from djongo import models as djongo_models
 
 class Manager(models.Model):
+    _id = djongo_models.ObjectIdField()
+
+    # id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')])
