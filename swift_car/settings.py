@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'managers_app',
     'cars_app',
     'agencies_app',
+    'reservations_app',
+    'clients_app',
 ]
 
 MIDDLEWARE = [
