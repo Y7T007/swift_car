@@ -1,6 +1,9 @@
 from django.db import models
+from djongo import models as djongo_models
+
 
 class Voiture(models.Model):
+    _id = djongo_models.ObjectIdField()
     voiture_id = models.IntegerField()
     marque = models.CharField(max_length=255)
     famille = models.CharField(max_length=255)
