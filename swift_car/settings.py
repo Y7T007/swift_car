@@ -33,6 +33,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clients_app',
+    'managers_app',
+    'reservations_app',
+    'cars_app',
+    'agencies_app',
+    'auth_app',
+
 ]
 
 MIDDLEWARE = [
@@ -72,9 +79,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'SwiftCar',
-        'CLIENT': {
-            'host': 'mongodb://localhost:27017',
-        }
     }
 }
 

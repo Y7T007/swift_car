@@ -2,7 +2,7 @@ from django.db import models
 from auth_app.models import User
 
 class Manager(User):
-    manager_id = models.IntegerField()
+    manager_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=1)
