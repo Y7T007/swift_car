@@ -77,9 +77,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'SwiftCar',
+        'ENFORCE_SCHEMA': False,
         'HOST' : 'mongodb://localhost:27017',
+        'CLIENT': {
+            'host': 'mongodb+srv://yassir7t:FCCHFK8xQvmJCduz@users.lhhhvmb.mongodb.net/SwiftCar?retryWrites=true&w=majority&appName=users',
+        }
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
