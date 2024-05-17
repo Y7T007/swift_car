@@ -22,7 +22,7 @@ SECRET_KEY = 'django-insecure-7!zf8hy^+$z#p18f=kz9t_#vj0q2&rykgdcex=ru63*t7gehjn
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "swift-car-django-server-4c51acec5937.herokuappcom",
+    "swift-car-django-server-4c51acec5937.herokuapp.com",
     "localhost",
     "127.0.0.1",
 ]
