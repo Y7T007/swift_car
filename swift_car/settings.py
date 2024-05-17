@@ -22,7 +22,7 @@ SECRET_KEY = 'django-insecure-7!zf8hy^+$z#p18f=kz9t_#vj0q2&rykgdcex=ru63*t7gehjn
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "swift-car-django-server-4c51acec5937.herokuapp.com",
+    "swift-car-django-server-4c51acec5937.herokuappcom",
     "localhost",
     "127.0.0.1",
 ]
@@ -42,9 +42,14 @@ INSTALLED_APPS = [
     'agencies_app',
     'reservations_app',
     'clients_app',
+    'corsheaders',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -82,7 +87,7 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'SwiftCar',
         'ENFORCE_SCHEMA': False,
-        'HOST' : 'mongodb://localhost:27017',
+        'HOST': 'mongodb+srv://yassir7t:FCCHFK8xQvmJCduz@users.lhhhvmb.mongodb.net',
         'CLIENT': {
             'host': 'mongodb+srv://yassir7t:FCCHFK8xQvmJCduz@users.lhhhvmb.mongodb.net/SwiftCar?retryWrites=true&w=majority&appName=users',
         }
@@ -132,3 +137,21 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
