@@ -21,7 +21,9 @@ SECRET_KEY = 'django-insecure-7!zf8hy^+$z#p18f=kz9t_#vj0q2&rykgdcex=ru63*t7gehjn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://swift-car-django-server-4c51acec5937.herokuapp.com/'
+]
 
 # Application definition
 
