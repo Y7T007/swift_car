@@ -23,6 +23,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "swift-car-django-server-4c51acec5937.herokuapp.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
 # Application definition
