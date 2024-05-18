@@ -1,3 +1,6 @@
+import os
+
+import pyjwt as jwt
 from bson import ObjectId
 from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
@@ -7,7 +10,7 @@ from bson.decimal128 import Decimal128
 import json
 from datetime import date
 import datetime
-import jwt
+
 import hashlib
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -28,6 +31,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 
 @csrf_exempt
+
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -41,19 +45,22 @@ def login(request):
                     'manager_id': str(manager._id),
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }
-                token = jwt.encode(payload, 'SECRET_KEY', algorithm='HS256')
+                secret_key = os.getenv('SECRET_KEY')
+                token = jwt.encode(payload, secret_key, algorithm='HS256')
                 return JsonResponse({'token': token})
             else:
                 return JsonResponse({'error': 'Invalid password'}, status=400)
         except Manager.DoesNotExist:
             return JsonResponse({'error': 'Manager not found'}, status=404)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 @csrf_exempt
 def add_manager(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        password = data.get('password')
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        data['password'] = hashed_password
         manager = Manager(**data)
         manager.save()
         return JsonResponse({"message": "Manager added successfully"})
