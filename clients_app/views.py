@@ -64,12 +64,9 @@ def update_client(request, client_id):
 
 @csrf_exempt
 def remove_client(request, client_id):
-    if request.method == 'POST':
-        try:
-            client = Client.objects.get(_id=ObjectId(client_id))
-            client.delete()
-            return JsonResponse({"message": "Client removed successfully"})
-        except Client.DoesNotExist:
-            return JsonResponse({"error": "Client not found"}, status=404)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
+    try:
+        client = Client.objects.get(_id=ObjectId(client_id))
+        client.delete()
+        return JsonResponse({"message": "Client removed successfully"})
+    except Client.DoesNotExist:
+        return JsonResponse({"error": "Client not found"}, status=404)
