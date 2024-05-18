@@ -1,6 +1,6 @@
 import os
 
-import pyjwt as jwt
+import jwt
 from bson import ObjectId
 from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
@@ -46,6 +46,7 @@ def login(request):
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }
                 secret_key = os.getenv('SECRET_KEY')
+                print(secret_key)
                 token = jwt.encode(payload, secret_key, algorithm='HS256')
                 return JsonResponse({'token': token})
             else:
