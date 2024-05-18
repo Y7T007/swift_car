@@ -30,13 +30,16 @@ class DecimalEncoder(json.JSONEncoder):
 
 
 
-@csrf_exempt
 
+
+
+@csrf_exempt
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         email = data.get('email')
         password = data.get('password')
+
         try:
             manager = Manager.objects.get(email=email)
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -46,13 +49,16 @@ def login(request):
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }
                 secret_key = os.getenv('SECRET_KEY')
-                print(secret_key)
+                print(f"Login Secret Key: {secret_key}")  # Debugging
                 token = jwt.encode(payload, secret_key, algorithm='HS256')
                 return JsonResponse({'token': token})
             else:
                 return JsonResponse({'error': 'Invalid password'}, status=400)
         except Manager.DoesNotExist:
             return JsonResponse({'error': 'Manager not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 
 @csrf_exempt
