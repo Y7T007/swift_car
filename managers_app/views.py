@@ -6,7 +6,12 @@ from .models import Manager
 from bson.decimal128 import Decimal128
 import json
 from datetime import date
-
+import datetime
+import jwt
+import hashlib
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import Manager
 
 from bson.objectid import ObjectId
 
@@ -19,6 +24,31 @@ class DecimalEncoder(json.JSONEncoder):
         elif isinstance(obj, ObjectId):
             return str(obj)  # convert ObjectId to string
         return super(DecimalEncoder, self).default(obj)
+
+
+
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        password = data.get('password')
+        try:
+            manager = Manager.objects.get(email=email)
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            if hashed_password == manager.password:
+                payload = {
+                    'manager_id': str(manager._id),
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                }
+                token = jwt.encode(payload, 'SECRET_KEY', algorithm='HS256')
+                return JsonResponse({'token': token})
+            else:
+                return JsonResponse({'error': 'Invalid password'}, status=400)
+        except Manager.DoesNotExist:
+            return JsonResponse({'error': 'Manager not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
 def add_manager(request):

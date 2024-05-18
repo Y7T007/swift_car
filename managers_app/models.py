@@ -12,3 +12,4 @@ class Manager(models.Model):
     salary = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     cin = models.CharField(max_length=255, default='')
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)
