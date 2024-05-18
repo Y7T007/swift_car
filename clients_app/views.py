@@ -51,7 +51,8 @@ def update_client(request, client_id):
         try:
             client = Client.objects.get(_id=ObjectId(client_id))
             for key, value in data.items():
-                setattr(client, key, value)
+                if hasattr(client, key):  # Ensure the attribute exists before setting it
+                    setattr(client, key, value)
             client.save()
             client_dict = model_to_dict(client)
             client_json = json.dumps(client_dict, cls=DecimalEncoder)
