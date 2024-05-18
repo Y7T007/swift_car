@@ -102,7 +102,7 @@ def update_manager(request, manager_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         try:
-            manager = Manager.objects.get(_id=manager_id)
+            manager = Manager.objects.get(_id=ObjectId(manager_id))
             for key, value in data.items():
                 setattr(manager, key, value)
             manager.save()
