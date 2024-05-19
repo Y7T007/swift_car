@@ -83,7 +83,7 @@ def remove_reservation(request, reservation_id):
 
 
 def sum_prices_per_month(request):
-    reservations = Reservation.objects.annotate(month=TruncMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
+    reservations = Reservation.objects.annotate(month=ExtractMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
     result = [item['total_price'] for item in reservations]
     return JsonResponse(result, safe=False)
 def sum_prices_by_week(request):
