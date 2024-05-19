@@ -6,6 +6,6 @@ urlpatterns = [
     path('view/<str:manager_id>', views.view_manager, name='view_manager'),
     path('add', views.add_manager, name='add_manager'),
     path('update/<str:manager_id>', views.update_manager, name='update_manager'),
-    path('remove/<int:manager_id>', views.remove_manager, name='remove_manager'),
+    path('remove/<str:manager_id>', views.remove_manager, name='remove_manager'),
     path('login', views.login, name='login'),
 ]

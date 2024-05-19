@@ -82,7 +82,7 @@ def view_all_managers(request):
     return HttpResponse(managers_json, content_type='application/json')
 def remove_manager(request, manager_id):
     try:
-        manager = Manager.objects.get(id=manager_id)
+        manager = Manager.objects.get(_id=ObjectId(manager_id))
         manager.delete()
         return JsonResponse({"message": "Manager removed successfully"})
     except Manager.DoesNotExist:
