@@ -2,6 +2,8 @@ from bson import ObjectId
 from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from managers_app.models import Manager
 from .models import Reservation
 from bson.decimal128 import Decimal128
 import json
@@ -178,31 +180,30 @@ def reservations_per_day(request):
 
     return JsonResponse(result, safe=False)
 
+from django.core.serializers.json import DjangoJSONEncoder
+from bson.objectid import ObjectId
+from bson.decimal128 import Decimal128
+from django.db.models import Count
+
+class JSONEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        elif isinstance(o, Decimal128):
+            return str(o)
+        return super().default(o)
+
 def reservations_by_manager(request):
-    # Fetch all reservations
-    reservations = Reservation.objects.all()
+    # Fetch all managers and annotate them with the count of their reservations
+    managers = Manager.objects.annotate(reservation_count=Count('reservation__manager'))
 
-    # Determine the date 4 weeks ago from the current date
-    four_weeks_ago = datetime.now().date() - relativedelta(weeks=4)
+    # Select the fields to include in the output
+    managers = managers.values('_id', 'name', 'date_of_birth', 'gender', 'contact_number', 'address', 'agence_id', 'salary', 'cin', 'email', 'password', 'reservation_count')
 
-    # Filter the reservations to only include those from the last 4 weeks
-    reservations = reservations.filter(date_reservation__gte=four_weeks_ago)
+    # Convert the QuerySet to a list
+    managers_list = list(managers)
 
-    # Initialize a dictionary to store the count of reservations for each manager
-    reservations_by_manager = defaultdict(int)
+    # Convert the list to JSON using the custom encoder
+    managers_json = json.dumps(managers_list, cls=JSONEncoder)
 
-    # Iterate over all reservations
-    for reservation in reservations:
-        # Extract the manager_id from the reservation
-        manager_id = reservation.manager_id
-
-        # Increment the count of reservations for this manager
-        reservations_by_manager[manager_id] += 1
-
-    # Sort the reservations_by_manager dictionary by count in descending order and take the top 10
-    sorted_reservations_by_manager = sorted(reservations_by_manager.items(), key=lambda item: item[1], reverse=True)[:10]
-
-    # Convert the sorted_reservations_by_manager list to a list of counts
-    result = [item[1] for item in sorted_reservations_by_manager]
-
-    return JsonResponse(result, safe=False)
+    return HttpResponse(managers_json, content_type='application/json')
