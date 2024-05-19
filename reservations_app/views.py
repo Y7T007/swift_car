@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from django.db.models.functions import TruncDay
 from django.db.models import Count
+from django.db.models.functions import TruncMonth
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -82,10 +83,9 @@ def remove_reservation(request, reservation_id):
 
 
 def sum_prices_per_month(request):
-    reservations = Reservation.objects.annotate(month=ExtractMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
+    reservations = Reservation.objects.annotate(month=TruncMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
     result = [item['total_price'] for item in reservations]
     return JsonResponse(result, safe=False)
-
 def sum_prices_by_week(request):
     one_month_ago = datetime.now() - timedelta(days=30)
     reservations = Reservation.objects.filter(date_reservation__gte=one_month_ago).annotate(week=ExtractWeek('date_reservation')).values('week').annotate(total_price=Sum('prix')).values('week', 'total_price')
