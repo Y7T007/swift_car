@@ -148,29 +148,45 @@ def sum_prices_by_week(request):
 
     return JsonResponse(result, safe=False)
 
+from collections import defaultdict
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 def reservations_per_day(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
 
-    # Initialize a dictionary to store the count of reservations for each day
-    reservations_per_day = defaultdict(int)
+    # Determine the date 4 weeks ago from the current date
+    four_weeks_ago = datetime.now().date() - relativedelta(weeks=4)
+
+    # Filter the reservations to only include those from the last 4 weeks
+    reservations = reservations.filter(date_reservation__gte=four_weeks_ago)
+
+    # Initialize a dictionary to store the count of reservations for each of the last 28 days
+    reservations_per_day = {day: 0 for day in range(28)}
 
     # Iterate over all reservations
     for reservation in reservations:
-        # Extract the day from the date_reservation field
-        day = reservation.date_reservation.toordinal()
+        # Calculate the number of days between the reservation date and the current date
+        days_ago = (datetime.now().date() - reservation.date_reservation).days
 
         # Increment the count of reservations for this day
-        reservations_per_day[day] += 1
+        reservations_per_day[days_ago] += 1
 
     # Convert the reservations_per_day dictionary to a list of counts
-    result = [reservations_per_day[day] for day in sorted(reservations_per_day.keys())]
+    result = [reservations_per_day[day] for day in range(28)]
 
     return JsonResponse(result, safe=False)
 
 def reservations_by_manager(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
+
+    # Determine the date 4 weeks ago from the current date
+    four_weeks_ago = datetime.now().date() - relativedelta(weeks=4)
+
+    # Filter the reservations to only include those from the last 4 weeks
+    reservations = reservations.filter(date_reservation__gte=four_weeks_ago)
 
     # Initialize a dictionary to store the count of reservations for each manager
     reservations_by_manager = defaultdict(int)
