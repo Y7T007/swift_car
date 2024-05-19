@@ -121,8 +121,12 @@ def sum_prices_by_week(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
 
+    # Determine the range of weeks
+    current_year = datetime.now().year
+    weeks_in_year = 53 if (current_year % 4 == 0 and current_year % 100 != 0) or (current_year % 400 == 0) else 52
+
     # Initialize a dictionary to store the total price for each week
-    prices_per_week = defaultdict(float)
+    prices_per_week = {week: 0.0 for week in range(1, weeks_in_year + 1)}
 
     # Iterate over all reservations
     for reservation in reservations:
@@ -144,13 +148,18 @@ def reservations_per_day(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
 
+    # Determine the range of days
+    start_date = datetime.now() - timedelta(days=365)
+    end_date = datetime.now()
+    days_range = (end_date - start_date).days
+
     # Initialize a dictionary to store the count of reservations for each day
-    reservations_per_day = defaultdict(int)
+    reservations_per_day = {day: 0 for day in range(days_range)}
 
     # Iterate over all reservations
     for reservation in reservations:
         # Extract the day from the date_reservation field
-        day = reservation.date_reservation.toordinal()
+        day = (reservation.date_reservation - start_date).days
 
         # Increment the count of reservations for this day
         reservations_per_day[day] += 1
