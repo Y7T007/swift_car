@@ -80,28 +80,25 @@ def remove_reservation(request, reservation_id):
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
+
 def sum_prices_per_month(request):
-    reservations = Reservation.objects.annotate(month=ExtractMonth('date')).values('month').annotate(
-        total_price=Sum('price')).values('month', 'total_price')
+    reservations = Reservation.objects.annotate(month=ExtractMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
     result = [item['total_price'] for item in reservations]
     return JsonResponse(result, safe=False)
-
 
 def sum_prices_by_week(request):
     one_month_ago = datetime.now() - timedelta(days=30)
-    reservations = Reservation.objects.filter(date__gte=one_month_ago).annotate(week=ExtractWeek('date')).values('week').annotate(total_price=Sum('price')).values('week', 'total_price')
+    reservations = Reservation.objects.filter(date_reservation__gte=one_month_ago).annotate(week=ExtractWeek('date_reservation')).values('week').annotate(total_price=Sum('prix')).values('week', 'total_price')
     result = [item['total_price'] for item in reservations]
     return JsonResponse(result, safe=False)
 
-
 def reservations_per_day(request):
     thirty_days_ago = datetime.now() - timedelta(days=30)
-    reservations = Reservation.objects.filter(date__gte=thirty_days_ago).annotate(day=TruncDay('date')).values('day').annotate(count=Count('id')).values('day', 'count')
+    reservations = Reservation.objects.filter(date_reservation__gte=thirty_days_ago).annotate(day=TruncDay('date_reservation')).values('day').annotate(count=Count('id')).values('day', 'count')
     result = [item['count'] for item in reservations]
     return JsonResponse(result, safe=False)
 
-
 def reservations_by_manager(request):
-    reservations = Reservation.objects.values('manager').annotate(count=Count('id')).order_by('-count')[:10]
+    reservations = Reservation.objects.values('manager_id').annotate(count=Count('id')).order_by('-count')[:10]
     result = [item['count'] for item in reservations]
     return JsonResponse(result, safe=False)
