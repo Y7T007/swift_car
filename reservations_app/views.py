@@ -82,9 +82,19 @@ def remove_reservation(request, reservation_id):
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
+from django.db import connection
+
 def sum_prices_per_month(request):
-    reservations = Reservation.objects.annotate(month=ExtractMonth('date_reservation')).values('month').annotate(total_price=Sum('prix')).values('month', 'total_price')
-    result = [item['total_price'] for item in reservations]
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT EXTRACT(MONTH FROM date_reservation) AS month, SUM(prix) AS total_price
+            FROM reservations_app_reservation
+            GROUP BY month
+            ORDER BY month
+        """)
+        rows = cursor.fetchall()
+
+    result = [row[1] for row in rows]
     return JsonResponse(result, safe=False)
 def sum_prices_by_week(request):
     one_month_ago = datetime.now() - timedelta(days=30)
