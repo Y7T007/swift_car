@@ -103,8 +103,11 @@ def sum_prices_per_month(request):
         # Extract the month from the date_reservation field
         month = reservation.date_reservation.month
 
-        # Add the price of the current reservation to the total price for this month
-        prices_per_month[month] += float(reservation.prix)
+        # Convert the price of the current reservation to a string and then to a float
+        price = float(str(reservation.prix))
+
+        # Add the price to the total price for this month
+        prices_per_month[month] += price
 
     # Convert the prices_per_month dictionary to a list of total prices
     result = [prices_per_month[month] for month in sorted(prices_per_month.keys())]
@@ -112,24 +115,70 @@ def sum_prices_per_month(request):
     return JsonResponse(result, safe=False)
 
 
-def sum_prices_by_week(request):
-    one_month_ago = datetime.now() - timedelta(days=30)
-    reservations = Reservation.objects.filter(date_reservation__gte=one_month_ago).annotate(
-        week=ExtractWeek('date_reservation')).values('week').annotate(total_price=Sum('prix')).values('week',
-                                                                                                      'total_price')
-    result = [item['total_price'] for item in reservations]
-    return JsonResponse(result, safe=False)
 
+
+def sum_prices_by_week(request):
+    # Fetch all reservations
+    reservations = Reservation.objects.all()
+
+    # Initialize a dictionary to store the total price for each week
+    prices_per_week = defaultdict(float)
+
+    # Iterate over all reservations
+    for reservation in reservations:
+        # Extract the week number from the date_reservation field
+        week = reservation.date_reservation.isocalendar()[1]
+
+        # Convert the price of the current reservation to a string and then to a float
+        price = float(str(reservation.prix))
+
+        # Add the price to the total price for this week
+        prices_per_week[week] += price
+
+    # Convert the prices_per_week dictionary to a list of total prices
+    result = [prices_per_week[week] for week in sorted(prices_per_week.keys())]
+
+    return JsonResponse(result, safe=False)
 
 def reservations_per_day(request):
-    thirty_days_ago = datetime.now() - timedelta(days=30)
-    reservations = Reservation.objects.filter(date_reservation__gte=thirty_days_ago).annotate(
-        day=TruncDay('date_reservation')).values('day').annotate(count=Count('id')).values('day', 'count')
-    result = [item['count'] for item in reservations]
+    # Fetch all reservations
+    reservations = Reservation.objects.all()
+
+    # Initialize a dictionary to store the count of reservations for each day
+    reservations_per_day = defaultdict(int)
+
+    # Iterate over all reservations
+    for reservation in reservations:
+        # Extract the day from the date_reservation field
+        day = reservation.date_reservation.toordinal()
+
+        # Increment the count of reservations for this day
+        reservations_per_day[day] += 1
+
+    # Convert the reservations_per_day dictionary to a list of counts
+    result = [reservations_per_day[day] for day in sorted(reservations_per_day.keys())]
+
     return JsonResponse(result, safe=False)
 
-
 def reservations_by_manager(request):
-    reservations = Reservation.objects.values('manager_id').annotate(count=Count('id')).order_by('-count')[:10]
-    result = [item['count'] for item in reservations]
+    # Fetch all reservations
+    reservations = Reservation.objects.all()
+
+    # Initialize a dictionary to store the count of reservations for each manager
+    reservations_by_manager = defaultdict(int)
+
+    # Iterate over all reservations
+    for reservation in reservations:
+        # Extract the manager_id from the reservation
+        manager_id = reservation.manager_id
+
+        # Increment the count of reservations for this manager
+        reservations_by_manager[manager_id] += 1
+
+    # Sort the reservations_by_manager dictionary by count in descending order and take the top 10
+    sorted_reservations_by_manager = sorted(reservations_by_manager.items(), key=lambda item: item[1], reverse=True)[:10]
+
+    # Convert the sorted_reservations_by_manager list to a list of counts
+    result = [item[1] for item in sorted_reservations_by_manager]
+
     return JsonResponse(result, safe=False)
