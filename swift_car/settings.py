@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'managers_app.TokenCheckerMiddleware.TokenCheckerMiddleware',
+    # 'managers_app.TokenCheckerMiddleware.TokenCheckerMiddleware',
 ]
 
 ROOT_URLCONF = 'swift_car.urls'

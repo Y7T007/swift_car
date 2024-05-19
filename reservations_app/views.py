@@ -115,32 +115,36 @@ def sum_prices_per_month(request):
     return JsonResponse(result, safe=False)
 
 
-
+from collections import defaultdict
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 def sum_prices_by_week(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
 
-    # Determine the range of weeks
-    current_year = datetime.now().year
-    weeks_in_year = 53 if (current_year % 4 == 0 and current_year % 100 != 0) or (current_year % 400 == 0) else 52
+    # Determine the date 4 weeks ago from the current date
+    four_weeks_ago = datetime.now().date() - relativedelta(weeks=4)
 
-    # Initialize a dictionary to store the total price for each week
-    prices_per_week = {week: 0.0 for week in range(1, weeks_in_year + 1)}
+    # Filter the reservations to only include those from the last 4 weeks
+    reservations = reservations.filter(date_reservation__gte=four_weeks_ago)
+
+    # Initialize a dictionary to store the total price for each of the last 4 weeks
+    prices_per_week = {week: 0.0 for week in range(4)}
 
     # Iterate over all reservations
     for reservation in reservations:
-        # Extract the week number from the date_reservation field
-        week = reservation.date_reservation.isocalendar()[1]
+        # Calculate the number of weeks between the reservation date and the current date
+        weeks_ago = (datetime.now().date() - reservation.date_reservation).days // 7
 
         # Convert the price of the current reservation to a string and then to a float
         price = float(str(reservation.prix))
 
-        # Add the price to the total price for this week
-        prices_per_week[week] += price
+        # Add the price to the total price for the corresponding week
+        prices_per_week[weeks_ago] += price
 
     # Convert the prices_per_week dictionary to a list of total prices
-    result = [prices_per_week[week] for week in sorted(prices_per_week.keys())]
+    result = [prices_per_week[week] for week in range(4)]
 
     return JsonResponse(result, safe=False)
 
@@ -148,18 +152,13 @@ def reservations_per_day(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
 
-    # Determine the range of days
-    start_date = datetime.now() - timedelta(days=365)
-    end_date = datetime.now()
-    days_range = (end_date - start_date).days
-
     # Initialize a dictionary to store the count of reservations for each day
-    reservations_per_day = {day: 0 for day in range(days_range)}
+    reservations_per_day = defaultdict(int)
 
     # Iterate over all reservations
     for reservation in reservations:
         # Extract the day from the date_reservation field
-        day = (reservation.date_reservation - start_date).days
+        day = reservation.date_reservation.toordinal()
 
         # Increment the count of reservations for this day
         reservations_per_day[day] += 1
