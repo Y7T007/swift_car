@@ -51,7 +51,7 @@ def login(request):
                 secret_key = os.getenv('SECRET_KEY')
                 print(f"Login Secret Key: {secret_key}")  # Debugging
                 token = jwt.encode(payload, secret_key, algorithm='HS256')
-                return JsonResponse({'token': token})
+                return JsonResponse({'token': token,'manager_id': str(manager._id)})
             else:
                 return JsonResponse({'error': 'Invalid password'}, status=400)
         except Manager.DoesNotExist:
