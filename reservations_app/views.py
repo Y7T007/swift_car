@@ -121,6 +121,7 @@ from collections import defaultdict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 def sum_prices_by_week(request):
     # Fetch all reservations
     reservations = Reservation.objects.all()
@@ -150,9 +151,11 @@ def sum_prices_by_week(request):
 
     return JsonResponse(result, safe=False)
 
+
 from collections import defaultdict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
 
 def reservations_per_day(request):
     # Fetch all reservations
@@ -180,10 +183,12 @@ def reservations_per_day(request):
 
     return JsonResponse(result, safe=False)
 
+
 from django.core.serializers.json import DjangoJSONEncoder
 from bson.objectid import ObjectId
 from bson.decimal128 import Decimal128
 from django.db.models import Count
+
 
 class JSONEncoder(DjangoJSONEncoder):
     def default(self, o):
@@ -193,12 +198,14 @@ class JSONEncoder(DjangoJSONEncoder):
             return str(o)
         return super().default(o)
 
+
 def reservations_by_manager(request):
     # Fetch all managers and annotate them with the count of their reservations
     managers = Manager.objects.annotate(reservation_count=Count('reservation__manager'))
 
     # Select the fields to include in the output
-    managers = managers.values('_id', 'name', 'date_of_birth', 'gender', 'contact_number', 'address', 'agence_id', 'salary', 'cin', 'email', 'password', 'reservation_count')
+    managers = managers.values('_id', 'name', 'date_of_birth', 'gender', 'contact_number', 'address', 'agence_id',
+                               'salary', 'cin', 'email', 'password', 'reservation_count')
 
     # Convert the QuerySet to a list
     managers_list = list(managers)
@@ -208,25 +215,34 @@ def reservations_by_manager(request):
 
     return HttpResponse(managers_json, content_type='application/json')
 
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Reservation
 from bson.objectid import ObjectId
 
+
 def accept_reservation(request, id):
-    try:
-        reservation = Reservation.objects.get(_id=ObjectId(id))
-        reservation.status = 'accepted'
-        reservation.save()
-        return JsonResponse({"message": "Reservation accepted successfully"})
-    except Reservation.DoesNotExist:
-        return JsonResponse({"error": "Reservation not found"}, status=404)
+    if request.method == 'GET':
+        try:
+            reservation = Reservation.objects.get(_id=ObjectId(id))
+            reservation.status = 'accepted'
+            reservation.save()
+            return JsonResponse({"message": "Reservation accepted successfully"})
+        except Reservation.DoesNotExist:
+            return JsonResponse({"error": "Reservation not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 def decline_reservation(request, id):
-    try:
-        reservation = Reservation.objects.get(_id=ObjectId(id))
-        reservation.status = 'declined'
-        reservation.save()
-        return JsonResponse({"message": "Reservation declined successfully"})
-    except Reservation.DoesNotExist:
-        return JsonResponse({"error": "Reservation not found"}, status=404)
+    if request.method == 'GET':
+        try:
+            reservation = Reservation.objects.get(_id=ObjectId(id))
+            reservation.status = 'declined'
+            reservation.save()
+            return JsonResponse({"message": "Reservation declined successfully"})
+        except Reservation.DoesNotExist:
+            return JsonResponse({"error": "Reservation not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
