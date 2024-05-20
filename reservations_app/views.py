@@ -207,3 +207,34 @@ def reservations_by_manager(request):
     managers_json = json.dumps(managers_list, cls=JSONEncoder)
 
     return HttpResponse(managers_json, content_type='application/json')
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Reservation
+from bson.objectid import ObjectId
+
+@csrf_exempt
+def accept_reservation(request, id):
+    if request.method == 'POST':
+        try:
+            reservation = Reservation.objects.get(_id=ObjectId(id))
+            reservation.status = 'accepted'
+            reservation.save()
+            return JsonResponse({"message": "Reservation accepted successfully"})
+        except Reservation.DoesNotExist:
+            return JsonResponse({"error": "Reservation not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def decline_reservation(request, id):
+    if request.method == 'POST':
+        try:
+            reservation = Reservation.objects.get(_id=ObjectId(id))
+            reservation.status = 'declined'
+            reservation.save()
+            return JsonResponse({"message": "Reservation declined successfully"})
+        except Reservation.DoesNotExist:
+            return JsonResponse({"error": "Reservation not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)

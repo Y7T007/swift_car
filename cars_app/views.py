@@ -72,3 +72,4 @@ def remove_car(request, car_id):
             return JsonResponse({"error": "Car not found"}, status=404)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
+
