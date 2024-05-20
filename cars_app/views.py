@@ -87,10 +87,20 @@ def view_car(request, car_id):
 
 def view_all_cars(request):
     cars = Voiture.objects.all()
-    cars_list = [model_to_dict(car) for car in cars]
+    cars_list = []
+    for car in cars:
+        car_dict = model_to_dict(car)
+
+        # Decode the image from base64
+        base64_data = base64.b64decode(car_dict['image'])
+        img_data = BytesIO(base64_data)
+        img = Image.open(img_data)
+        car_dict['image'] = img
+
+        cars_list.append(car_dict)
+
     cars_json = json.dumps(cars_list, cls=DecimalEncoder)
     return HttpResponse(cars_json, content_type='application/json')
-
 
 @csrf_exempt
 def remove_car(request, car_id):
