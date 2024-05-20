@@ -1,10 +1,11 @@
 from django.db import models
-from djongo import models as djongo_models
+from clients_app.models import Client
+from managers_app.models import Manager
 
 class Reservation(models.Model):
     reservation_id = models.IntegerField()
-    client_id = djongo_models.ObjectIdField()
-    manager_id = djongo_models.ObjectIdField()
+    client_id = models.ForeignKey(Client.id, on_delete=models.CASCADE)
+    manager_id = models.ForeignKey(Manager, on_delete=models.CASCADE)
     date_reservation = models.DateField()
     date_debut = models.DateField()
     date_fin = models.DateField()
