@@ -227,7 +227,6 @@ def accept_reservation(request, id):
         try:
             reservation = Reservation.objects.get(_id=ObjectId(id))
             reservation.status = 'accepted'
-            reservation.prix= float(reservation.prix)
             reservation.save()
             return JsonResponse({"message": "Reservation accepted successfully"})
         except Reservation.DoesNotExist:
@@ -241,7 +240,6 @@ def decline_reservation(request, id):
         try:
             reservation = Reservation.objects.get(_id=ObjectId(id))
             reservation.status = 'declined'
-            reservation.prix= float(reservation.prix)
             reservation.save()
             return JsonResponse({"message": "Reservation declined successfully"})
         except Reservation.DoesNotExist:

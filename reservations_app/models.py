@@ -13,5 +13,5 @@ class Reservation(models.Model):
     date_debut = models.DateField()
     date_fin = models.DateField()
     voiture = models.ForeignKey(Voiture, on_delete=models.CASCADE)
-    prix= models.DecimalField(max_digits=8, decimal_places=2)
+    prix = models.FloatField()
     status = models.CharField(max_length=255)
