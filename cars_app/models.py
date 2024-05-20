@@ -17,7 +17,7 @@ class Voiture(models.Model):
     visite_etat = models.IntegerField()
     agence_id = models.IntegerField()
     prix_par_jour = models.FloatField()
-    disponibilite = models.BooleanField()
+    disponibilite = models.CharField()
     puissance_fiscale = models.IntegerField()
     vitesse_max = models.IntegerField()
     kilometrage = models.IntegerField()
