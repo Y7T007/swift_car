@@ -9,7 +9,7 @@ urlpatterns = [
     path('sum-prices-by-week', views.sum_prices_by_week, name='sum_prices_by_week'),
     path('reservations-per-day', views.reservations_per_day, name='reservations_per_day'),
     path('reservations-by-manager', views.reservations_by_manager, name='reservations_by_manager'),
-    path('reservations/accepter/<str:id>', views.accept_reservation, name='accept_reservation'),
-    path('reservations/refuser/<str:id>', views.decline_reservation, name='decline_reservation'),
+    path('accepter/<str:id>', views.accept_reservation, name='accept_reservation'),
+    path('refuser/<str:id>', views.decline_reservation, name='decline_reservation'),
 
 ]

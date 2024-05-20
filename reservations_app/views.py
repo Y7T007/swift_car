@@ -213,28 +213,20 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Reservation
 from bson.objectid import ObjectId
 
-@csrf_exempt
 def accept_reservation(request, id):
-    if request.method == 'POST':
-        try:
-            reservation = Reservation.objects.get(_id=ObjectId(id))
-            reservation.status = 'accepted'
-            reservation.save()
-            return JsonResponse({"message": "Reservation accepted successfully"})
-        except Reservation.DoesNotExist:
-            return JsonResponse({"error": "Reservation not found"}, status=404)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
+    try:
+        reservation = Reservation.objects.get(_id=ObjectId(id))
+        reservation.status = 'accepted'
+        reservation.save()
+        return JsonResponse({"message": "Reservation accepted successfully"})
+    except Reservation.DoesNotExist:
+        return JsonResponse({"error": "Reservation not found"}, status=404)
 
-@csrf_exempt
 def decline_reservation(request, id):
-    if request.method == 'POST':
-        try:
-            reservation = Reservation.objects.get(_id=ObjectId(id))
-            reservation.status = 'declined'
-            reservation.save()
-            return JsonResponse({"message": "Reservation declined successfully"})
-        except Reservation.DoesNotExist:
-            return JsonResponse({"error": "Reservation not found"}, status=404)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
+    try:
+        reservation = Reservation.objects.get(_id=ObjectId(id))
+        reservation.status = 'declined'
+        reservation.save()
+        return JsonResponse({"message": "Reservation declined successfully"})
+    except Reservation.DoesNotExist:
+        return JsonResponse({"error": "Reservation not found"}, status=404)
