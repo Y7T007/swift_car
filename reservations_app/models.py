@@ -11,3 +11,4 @@ class Reservation(models.Model):
     date_fin = models.DateField()
     voiture_id = models.IntegerField()
     prix= models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(max_length=255)
