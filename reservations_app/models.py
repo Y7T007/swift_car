@@ -4,8 +4,8 @@ from managers_app.models import Manager
 
 class Reservation(models.Model):
     reservation_id = models.IntegerField()
-    client_id = models.ForeignKey(Client.id, on_delete=models.CASCADE)
-    manager_id = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     date_reservation = models.DateField()
     date_debut = models.DateField()
     date_fin = models.DateField()
