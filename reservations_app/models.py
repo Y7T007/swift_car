@@ -1,10 +1,11 @@
 from django.db import models
-
+from djongo import models as djongo_models
 from cars_app.models import Voiture
 from clients_app.models import Client
 from managers_app.models import Manager
 
 class Reservation(models.Model):
+    _id = djongo_models.ObjectIdField()
     reservation_id = models.IntegerField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
