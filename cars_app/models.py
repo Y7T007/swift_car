@@ -24,7 +24,7 @@ class Voiture(models.Model):
     transmission = models.CharField(max_length=255)
     carburant = models.CharField(max_length=255)
     modele = models.CharField(max_length=255)
-
+    image = models.TextField()
 def save(self, *args, **kwargs):
     # Call the "real" save() method.
     super(Voiture, self).save(*args, **kwargs)
