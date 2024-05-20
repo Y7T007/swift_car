@@ -220,7 +220,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Reservation
 from bson.objectid import ObjectId
-from decimal import Decimal
 
 
 def accept_reservation(request, id):
@@ -228,7 +227,7 @@ def accept_reservation(request, id):
         try:
             reservation = Reservation.objects.get(_id=ObjectId(id))
             reservation.status = 'accepted'
-            reservation.prix= Decimal(reservation.prix)
+            reservation.prix= Decimal128(reservation.prix)
             reservation.save()
             return JsonResponse({"message": "Reservation accepted successfully"})
         except Reservation.DoesNotExist:
@@ -242,7 +241,7 @@ def decline_reservation(request, id):
         try:
             reservation = Reservation.objects.get(_id=ObjectId(id))
             reservation.status = 'declined'
-            reservation.prix= Decimal(reservation.prix)
+            reservation.prix= Decimal128(reservation.prix)
             reservation.save()
             return JsonResponse({"message": "Reservation declined successfully"})
         except Reservation.DoesNotExist:
